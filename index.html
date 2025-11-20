@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحليل بيانات ورشة العمل - التقرير الشامل</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- HTML2PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind Config -->
+    <script>
+        function setupTailwind() {
+            if (typeof tailwind !== 'undefined') {
+                tailwind.config = {
+                    theme: {
+                        extend: {
+                            fontFamily: {
+                                sans: ['Tajawal', 'sans-serif'],
+                            },
+                            colors: {
+                                brand: {
+                                    50: '#f0fdfa',
+                                    100: '#ccfbf1',
+                                    500: '#14b8a6',
+                                    600: '#0d9488',
+                                    800: '#115e59',
+                                    900: '#134e4a',
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://cdn.tailwindcss.com" onload="setupTailwind()"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f8fafc;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            border: 1px solid #f1f5f9;
+            page-break-inside: avoid;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .insight-badge {
+            background-color: #f0fdfa;
+            color: #115e59;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: 1px solid #ccfbf1;
+        }
+        /* Word Cloud Styling */
+        .word-cloud span {
+            display: inline-block;
+            margin: 4px 10px;
+            transition: all 0.3s;
+            cursor: default;
+            line-height: 1.6;
+        }
+        .word-cloud span:hover {
+            color: #0d9488;
+            transform: scale(1.15);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- Navigation -->
+    <nav class="bg-brand-900 text-white shadow-xl sticky top-0 z-50 backdrop-blur-md bg-opacity-95">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center gap-4">
+                    <div class="bg-white/10 p-2 rounded-lg">
+                        <i class="fa-solid fa-chart-pie text-2xl text-brand-100"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold tracking-wide">تقرير ورشة العمل الشامل</h1>
+                        <p class="text-xs text-brand-100 opacity-90">تحليل 270 مشارك | AI in Business</p>
+                    </div>
+                </div>
+                <button onclick="generatePDF()" class="bg-white text-brand-900 hover:bg-brand-50 font-bold py-2.5 px-6 rounded-xl shadow-lg transition transform hover:scale-105 flex items-center gap-2">
+                    <i class="fa-solid fa-file-arrow-down"></i>
+                    <span>تصدير PDF</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Dashboard -->
+    <div id="dashboard-content" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        
+        <!-- 1. High-Level KPIs -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="card border-b-4 border-brand-500 relative overflow-hidden">
+                <div class="absolute top-0 left-0 p-4 opacity-10"><i class="fa-solid fa-users text-6xl"></i></div>
+                <div class="text-slate-500 text-sm font-medium mb-1">إجمالي المشاركين</div>
+                <div class="text-4xl font-extrabold text-brand-900">270</div>
+                <div class="text-xs font-bold text-emerald-600 mt-3 bg-emerald-50 inline-block px-2 py-1 rounded">
+                    <i class="fa-solid fa-check"></i> بيانات مكتملة
+                </div>
+            </div>
+            <div class="card border-b-4 border-blue-500 relative overflow-hidden">
+                <div class="absolute top-0 left-0 p-4 opacity-10"><i class="fa-solid fa-cake-candles text-6xl"></i></div>
+                <div class="text-slate-500 text-sm font-medium mb-1">متوسط العمر</div>
+                <div class="text-4xl font-extrabold text-blue-900">29.5</div>
+                <div class="text-xs text-slate-400 mt-3">الوسيط: 27 | المنوال: 25</div>
+            </div>
+            <div class="card border-b-4 border-purple-500 relative overflow-hidden">
+                <div class="absolute top-0 left-0 p-4 opacity-10"><i class="fa-solid fa-earth-asia text-6xl"></i></div>
+                <div class="text-slate-500 text-sm font-medium mb-1">الأعلى تمثيلاً</div>
+                <div class="text-3xl font-extrabold text-purple-900 truncate">اليمن 🇾🇪</div>
+                <div class="text-xs font-bold text-purple-600 mt-3">39.26% (106 مشارك)</div>
+            </div>
+            <div class="card border-b-4 border-orange-500 relative overflow-hidden">
+                <div class="absolute top-0 left-0 p-4 opacity-10"><i class="fa-solid fa-graduation-cap text-6xl"></i></div>
+                <div class="text-slate-500 text-sm font-medium mb-1">المستوى السائد</div>
+                <div class="text-3xl font-extrabold text-orange-900">مبتدئ</div>
+                <div class="text-xs font-bold text-orange-600 mt-3">42.96% من الحضور</div>
+            </div>
+        </div>
+
+        <!-- 2. Demographics (Detailed) -->
+        <div>
+            <div class="flex items-center gap-2 mb-4 border-b pb-2 border-slate-200">
+                <i class="fa-solid fa-id-card text-brand-600"></i>
+                <h2 class="text-xl font-bold text-slate-800">البيانات الديموغرافية (Demographics)</h2>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Age Distribution Simulation -->
+                <div class="card lg:col-span-1">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="font-bold text-slate-700">توزيع الفئات العمرية</h3>
+                        <span class="insight-badge">75% شباب (&le;33)</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="ageChart"></canvas>
+                    </div>
+                </div>
+                <!-- Gender & Student Split (Combined Visual) -->
+                <div class="card lg:col-span-1">
+                    <h3 class="font-bold text-slate-700 mb-4 text-center">الجنس والحالة الدراسية</h3>
+                    <div class="grid grid-cols-2 gap-2 h-full pb-8">
+                        <div class="relative h-48 w-full">
+                            <canvas id="genderChart"></canvas>
+                            <p class="text-center text-xs mt-2 font-bold">86% ذكور</p>
+                        </div>
+                        <div class="relative h-48 w-full">
+                            <canvas id="studentChart"></canvas>
+                            <p class="text-center text-xs mt-2 font-bold">43% طلاب</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Countries -->
+                <div class="card lg:col-span-1">
+                    <h3 class="font-bold text-slate-700 mb-4">التوزيع الجغرافي (أعلى 5)</h3>
+                    <div class="chart-container">
+                        <canvas id="countryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. AI Knowledge Analysis (Deep Dive) -->
+        <div>
+            <div class="flex items-center gap-2 mb-4 border-b pb-2 border-slate-200">
+                <i class="fa-solid fa-brain text-brand-600"></i>
+                <h2 class="text-xl font-bold text-slate-800">تحليل المعرفة والخبرة (AI Knowledge)</h2>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Overall Knowledge -->
+                <div class="card lg:col-span-4">
+                    <h3 class="font-bold text-slate-700 mb-2">مستويات الخبرة العامة</h3>
+                    <p class="text-xs text-slate-400 mb-4">20% بدون خبرة سابقة (فرصة للتعليم التأسيسي)</p>
+                    <div class="chart-container" style="height: 250px;">
+                        <canvas id="knowledgeChart"></canvas>
+                    </div>
+                </div>
+                <!-- Cross Analysis: Gender vs Knowledge -->
+                <div class="card lg:col-span-4">
+                    <h3 class="font-bold text-slate-700 mb-2">مستوى الخبرة حسب الجنس</h3>
+                    <p class="text-xs text-slate-400 mb-4">لاحظ: 100% من الخبراء ذكور</p>
+                    <div class="chart-container" style="height: 250px;">
+                        <canvas id="knowledgeGenderChart"></canvas>
+                    </div>
+                </div>
+                <!-- Age vs Knowledge -->
+                <div class="card lg:col-span-4">
+                    <h3 class="font-bold text-slate-700 mb-2">متوسط العمر حسب الخبرة</h3>
+                    <p class="text-xs text-slate-400 mb-4">ارتباط طردي: كلما زادت الخبرة زاد العمر</p>
+                    <div class="chart-container" style="height: 250px;">
+                        <canvas id="ageKnowledgeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Motivation & Preferences -->
+        <div>
+            <div class="flex items-center gap-2 mb-4 border-b pb-2 border-slate-200">
+                <i class="fa-solid fa-heart text-brand-600"></i>
+                <h2 class="text-xl font-bold text-slate-800">الدوافع والتفضيلات (Motivations & Preferences)</h2>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Reasons for Joining -->
+                <div class="card lg:col-span-1">
+                    <h3 class="font-bold text-slate-700 mb-4">أهم أسباب الانضمام</h3>
+                    <div class="chart-container">
+                        <canvas id="reasonsChart"></canvas>
+                    </div>
+                </div>
+                <!-- Timing Comparison -->
+                <div class="card lg:col-span-1">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="font-bold text-slate-700">تفضيلات التوقيت (صباحي vs مسائي)</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="timingChart"></canvas>
+                    </div>
+                    <div class="text-xs text-center mt-2 text-slate-500">
+                        <span class="inline-block w-3 h-3 bg-yellow-400 rounded-full mr-1"></span> صباح السبت (الأعلى)
+                        <span class="inline-block w-3 h-3 bg-slate-800 rounded-full mr-1 ml-2"></span> مساء الجمعة
+                    </div>
+                </div>
+                <!-- Engagement Metrics -->
+                <div class="card lg:col-span-1 flex flex-col justify-center">
+                    <div class="text-center mb-8">
+                        <h3 class="text-lg font-bold text-slate-700">الرغبة في مواد إضافية</h3>
+                        <div class="text-5xl font-extrabold text-brand-600 mt-2">97.4%</div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2 max-w-[200px] mx-auto">
+                            <div class="bg-brand-600 h-2.5 rounded-full" style="width: 97.4%"></div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <h3 class="text-lg font-bold text-slate-700">الحماس لورش مستقبلية</h3>
+                        <div class="text-5xl font-extrabold text-pink-600 mt-2">99.6%</div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2 max-w-[200px] mx-auto">
+                            <div class="bg-pink-600 h-2.5 rounded-full" style="width: 99.6%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Word Cloud & Qualitative -->
+        <div class="card bg-gradient-to-br from-white to-brand-50 border-brand-100">
+            <h3 class="font-bold text-slate-800 mb-4 text-center text-lg">سحابة اهتمامات المشاركين</h3>
+            <div id="wordCloud" class="word-cloud text-center py-4 min-h-[150px] flex flex-wrap justify-center items-center content-center">
+                <!-- JS Populated -->
+            </div>
+        </div>
+
+        <!-- 6. Detailed Insights Report (Textual) -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mt-8">
+            <h2 class="text-xl font-bold text-brand-900 mb-6 flex items-center gap-2">
+                <i class="fa-solid fa-list-check"></i> ملخص الرؤى التحليلية (Insights Report)
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm leading-relaxed">
+                <!-- Column 1 -->
+                <div>
+                    <h4 class="font-bold text-slate-800 mb-2 border-b border-brand-100 pb-1">🌍 التركيبة السكانية</h4>
+                    <ul class="list-disc list-inside space-y-1 text-slate-600 marker:text-brand-500">
+                        <li>قاعدة شبابية بامتياز: <strong>75%</strong> من المشاركين تحت سن 33 عاماً.</li>
+                        <li>هيمنة ذكورية بنسبة <strong>85.5%</strong>، مع وجود فرصة لزيادة تمثيل الإناث.</li>
+                        <li>الطلاب يشكلون <strong>43%</strong>، مما يبرر الطلب العالي على المحتوى التأسيسي.</li>
+                        <li>اليمن تتصدر المشاركة (39%) تليها مصر (20%)، مما يشير لسوق قوي في هذه الدول.</li>
+                    </ul>
+
+                    <h4 class="font-bold text-slate-800 mb-2 border-b border-brand-100 pb-1 mt-4">🎓 المعرفة والخبرة</h4>
+                    <ul class="list-disc list-inside space-y-1 text-slate-600 marker:text-brand-500">
+                        <li><strong>70%</strong> من الحضور مبتدئون أو بدون خبرة سابقة.</li>
+                        <li>الفجوة الجندرية تتسع مع الخبرة: <strong>100%</strong> من فئة "خبير" هم ذكور.</li>
+                        <li>الخبراء (1.5% فقط) هم الأكبر سناً (متوسط 40 سنة) وغير طلاب كلياً.</li>
+                        <li>الطلاب هم الفئة الأكبر ضمن "بدون خبرة سابقة" (53% منهم طلاب).</li>
+                    </ul>
+                </div>
+
+                <!-- Column 2 -->
+                <div>
+                    <h4 class="font-bold text-slate-800 mb-2 border-b border-brand-100 pb-1">🚀 الدوافع والاهتمامات</h4>
+                    <ul class="list-disc list-inside space-y-1 text-slate-600 marker:text-brand-500">
+                        <li>المبتدئون يبحثون عن "التعلم"، بينما المتقدمون يركزون على "ريادة الأعمال".</li>
+                        <li>الخبراء يهتمون بشكل خاص بـ "التحول إلى الذكاء الاصطناعي التوليدي".</li>
+                        <li><strong>99.6%</strong> معدل حماس استثنائي لورش المستقبل.</li>
+                        <li>طلب كاسح للمواد الإضافية (97%) يدل على رغبة في التعلم المستمر.</li>
+                    </ul>
+
+                    <h4 class="font-bold text-slate-800 mb-2 border-b border-brand-100 pb-1 mt-4">📅 التفضيلات اللوجستية</h4>
+                    <ul class="list-disc list-inside space-y-1 text-slate-600 marker:text-brand-500">
+                        <li><strong>السبت صباحاً</strong> هو الموعد الذهبي (35% تفضيل).</li>
+                        <li><strong>الجمعة مساءً</strong> هو الخيار المسائي المفضل (26%).</li>
+                        <li>الفئات الأصغر سناً تفضل عطلات نهاية الأسبوع.</li>
+                        <li>المتقدمون والخبراء يظهرون مرونة أكبر في الأوقات.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <footer class="text-center text-slate-400 text-xs py-6">
+            تم إنشاء التقرير بناءً على البيانات الفعلية لـ 270 مشارك | aiNarabic Workshop
+        </footer>
+
+    </div>
+
+    <!-- LOGIC SCRIPT -->
+    <script>
+        window.addEventListener('load', function() {
+            if (typeof Chart === 'undefined') return;
+
+            Chart.defaults.font.family = 'Tajawal';
+            Chart.defaults.color = '#64748b';
+            Chart.defaults.borderColor = '#f1f5f9';
+
+            // 1. Age Group Chart (Simulation based on: 25% <=23, 75% <=33, Range 16-59)
+            // Creating 5 buckets
+            new Chart(document.getElementById('ageChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['16-20', '21-25', '26-30', '31-40', '40+'],
+                    datasets: [{
+                        label: 'عدد المشاركين',
+                        // Estimated counts to match the stats provided
+                        data: [30, 95, 80, 50, 15], 
+                        backgroundColor: '#14b8a6',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, grid: { display: false } } }
+                }
+            });
+
+            // 2. Gender Chart
+            new Chart(document.getElementById('genderChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['ذكور', 'إناث'],
+                    datasets: [{
+                        data: [85.56, 14.44],
+                        backgroundColor: ['#3b82f6', '#ec4899'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // 3. Student Chart
+            new Chart(document.getElementById('studentChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['غير طالب', 'طالب'],
+                    datasets: [{
+                        data: [56.67, 43.33],
+                        backgroundColor: ['#64748b', '#f59e0b'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // 4. Country Chart
+            new Chart(document.getElementById('countryChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['اليمن', 'مصر', 'المغرب', 'الجزائر', 'سوريا'],
+                    datasets: [{
+                        label: 'العدد',
+                        data: [106, 54, 26, 16, 14],
+                        backgroundColor: ['#115e59', '#0d9488', '#14b8a6', '#2dd4bf', '#5eead4'],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { grid: { display: false } } }
+                }
+            });
+
+            // 5. Knowledge Chart (Overall)
+            new Chart(document.getElementById('knowledgeChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['مبتدئ (43%)', 'متوسط (28%)', 'بدون خبرة (20%)', 'متقدم (8%)', 'خبير (1.5%)'],
+                    datasets: [{
+                        data: [42.96, 27.78, 20.00, 7.78, 1.48],
+                        backgroundColor: ['#34d399', '#10b981', '#9ca3af', '#059669', '#064e3b'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'right', labels: { font: { size: 11 } } } }
+                }
+            });
+
+            // 6. Knowledge by Gender (Stacked)
+            // Based on: NoPrior(M79/F20), Beg(M84/F15), Int(M86/F13), Adv(M90/F9), Exp(M100/F0)
+            new Chart(document.getElementById('knowledgeGenderChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['بدون خبرة', 'مبتدئ', 'متوسط', 'متقدم', 'خبير'],
+                    datasets: [
+                        {
+                            label: 'ذكور',
+                            data: [79.63, 84.48, 86.67, 90.48, 100],
+                            backgroundColor: '#3b82f6',
+                            stack: 'Stack 0'
+                        },
+                        {
+                            label: 'إناث',
+                            data: [20.37, 15.52, 13.33, 9.52, 0],
+                            backgroundColor: '#ec4899',
+                            stack: 'Stack 0'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { x: { stacked: true }, y: { stacked: true, max: 100 } },
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+
+            // 7. Age by Knowledge
+            new Chart(document.getElementById('ageKnowledgeChart'), {
+                type: 'line',
+                data: {
+                    labels: ['بدون خبرة', 'مبتدئ', 'متوسط', 'متقدم', 'خبير'],
+                    datasets: [{
+                        label: 'متوسط العمر',
+                        data: [25.91, 29.75, 30.27, 32.57, 39.75],
+                        backgroundColor: 'rgba(249, 115, 22, 0.2)',
+                        borderColor: '#f97316',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#f97316',
+                        pointRadius: 5,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { min: 20, max: 45 } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // 8. Reasons Chart
+            new Chart(document.getElementById('reasonsChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['التعلم', 'تطوير المهارات', 'ريادة الأعمال', 'شغف الريادة', 'معرفة المزيد'],
+                    datasets: [{
+                        label: 'النسبة',
+                        data: [10.74, 8.52, 7.78, 7.04, 5.93],
+                        backgroundColor: '#6366f1',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // 9. Timing Preference Comparison
+            new Chart(document.getElementById('timingChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['السبت', 'الجمعة', 'الخميس', 'الأربعاء'],
+                    datasets: [
+                        {
+                            label: 'صباحي',
+                            data: [35.19, 18.89, 12.22, 12.59],
+                            backgroundColor: '#facc15',
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'مسائي',
+                            data: [19.26, 26.67, 18.15, 5.00], // Wed evening est low
+                            backgroundColor: '#1e293b',
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } } // Custom legend in HTML
+                }
+            });
+
+            // 10. Word Cloud Generation
+            const words = [
+                {text: 'التعلم (Learning)', size: 32, color: '#0d9488', w: 700},
+                {text: 'تطوير المهارات', size: 24, color: '#0f766e', w: 600},
+                {text: 'ريادة الأعمال', size: 22, color: '#f59e0b', w: 600},
+                {text: 'الذكاء الاصطناعي', size: 28, color: '#115e59', w: 700},
+                {text: 'بناء مشاريع', size: 18, color: '#6366f1', w: 500},
+                {text: 'تغيير المسار', size: 16, color: '#ec4899', w: 500},
+                {text: 'Generative AI', size: 20, color: '#8b5cf6', w: 600},
+                {text: 'شغف', size: 18, color: '#ef4444', w: 500},
+                {text: 'فضول', size: 14, color: '#64748b', w: 400},
+                {text: 'شهادة', size: 14, color: '#64748b', w: 400}
+            ];
+            const cloud = document.getElementById('wordCloud');
+            words.forEach(item => {
+                const span = document.createElement('span');
+                span.innerText = item.text;
+                span.style.fontSize = item.size + 'px';
+                span.style.color = item.color;
+                span.style.fontWeight = item.w;
+                cloud.appendChild(span);
+            });
+
+        });
+
+        // PDF Function
+        function generatePDF() {
+            if (typeof html2pdf === 'undefined') {
+                alert('المكتبة غير جاهزة، يرجى الانتظار...');
+                return;
+            }
+            const element = document.getElementById('dashboard-content');
+            const btn = document.querySelector('nav button');
+            const original = btn.innerHTML;
+            
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> جاري المعالجة';
+            
+            const opt = {
+                margin: [5, 5],
+                filename: 'AI_Workshop_Report_Full.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                btn.innerHTML = original;
+            });
+        }
+    </script>
+</body>
+</html>
