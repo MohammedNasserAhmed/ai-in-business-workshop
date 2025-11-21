@@ -23,7 +23,7 @@ participants_count: 278
 ## 🎥 Interactive Demo
 
 <!-- TODO: Replace with actual GIF path in docs/assets/demo-preview.gif -->
-![Dashboard Preview](https://placehold.co/800x400/14b8a6/ffffff?text=Dashboard+Demo+GIF+(Pending))
+![Dashboard Preview](https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3bTluOWU5enZ4Y2h5ZzZheWFycnViMGJzZnVwMHR2dG9hZHIxdWVweSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/5krfq8pMdYhAV52xPg/giphy.gif)
 
 [**🔴 View Live Dashboard**](https://demo.example.com) <!-- TODO: Update Link -->
 
