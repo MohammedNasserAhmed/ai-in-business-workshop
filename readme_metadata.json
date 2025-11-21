@@ -1,0 +1,18 @@
+{
+  "project_name": "AI Business Workshop Report",
+  "version": "1.0.0",
+  "last_updated": "2025-11-21",
+  "maintainers": ["MohammedNasserAhmed"],
+  "demo_url": "https://demo.example.com",
+  "tools_used": [
+    "Microsoft Teams",
+    "Power Automate",
+    "Make.com",
+    "Gemini Assist",
+    "Gemini 1.5 Pro",
+    "Tailwind CSS",
+    "Chart.js",
+    "HTML2PDF"
+  ],
+  "participants_count": 278
+}
