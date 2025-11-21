@@ -141,6 +141,8 @@ graph TD
 
 ## 🚀 How It Works (Step-by-Step)
 
+![Pipline Preview](docs/pipeline.png)
+
 ### 1. Data Collection
 Users registered via a Microsoft Form embedded in the workshop landing page. 
 *   **Input Rules:** Email validation, Phone number formatting.
