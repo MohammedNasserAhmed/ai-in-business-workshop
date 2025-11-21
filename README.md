@@ -3,7 +3,7 @@ project_name: AI Business Workshop Report
 version: 1.0.0
 last_updated: 2025-11-21
 maintainers: ["MohammedNasserAhmed"]
-demo_url: "https://demo.example.com" # TODO: Update with actual deployment URL
+demo_url: "https://mohammednasserahmed.github.io/ai-business-workshop-report/" # TODO: Update with actual deployment URL
 tools_used: ["Microsoft Teams", "Power Automate", "Make.com", "Gemini 1.5 Pro", "Tailwind CSS"]
 participants_count: 278
 ---
@@ -23,7 +23,7 @@ participants_count: 278
 ## 🎥 Interactive Demo
 
 <!-- TODO: Replace with actual GIF path in docs/assets/demo-preview.gif -->
-![Dashboard Preview](docs/dashboard-cm.gif)
+![Dashboard Preview](https://github.com/MohammedNasserAhmed/ai-business-workshop-report/blob/d1b6cf7679fab76a8e77c34ad60391e239190984/docs/dashboard-cm.gif)
 
 [**🔴 View Live Dashboard**](https://mohammednasserahmed.github.io/ai-business-workshop-report/) <!-- TODO: Update Link -->
 
