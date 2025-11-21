@@ -92,8 +92,8 @@ The dashboard visualizes data from **278 participants** who attended the "Artifi
 
 ## 🏗 Architecture & Automation Pipeline
 
-<p align="center">
-  <img src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3bTluOWU5enZ4Y2h5ZzZheWFycnViMGJzZnVwMHR2dG9hZHIxdWVweSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/5krfq8pMdYhAV52xPg/giphy.gif" width="80%">
+<p align="left">
+  <img src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3bTluOWU5enZ4Y2h5ZzZheWFycnViMGJzZnVwMHR2dG9hZHIxdWVweSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/5krfq8pMdYhAV52xPg/giphy.gif" width="40%">
 </p>
 
 The "Secret Sauce" of this workshop was its invisible, high-efficiency orchestration layer.
