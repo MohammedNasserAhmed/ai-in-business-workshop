@@ -23,9 +23,9 @@ participants_count: 278
 ## 🎥 Interactive Demo
 
 <!-- TODO: Replace with actual GIF path in docs/assets/demo-preview.gif -->
-![Dashboard Preview](https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3bTluOWU5enZ4Y2h5ZzZheWFycnViMGJzZnVwMHR2dG9hZHIxdWVweSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/5krfq8pMdYhAV52xPg/giphy.gif)
+![Dashboard Preview](docs/dashboard-cm.gif)
 
-[**🔴 View Live Dashboard**](https://demo.example.com) <!-- TODO: Update Link -->
+[**🔴 View Live Dashboard**](https://mohammednasserahmed.github.io/ai-business-workshop-report/) <!-- TODO: Update Link -->
 
 ---
 
@@ -106,6 +106,9 @@ The "Secret Sauce" of this workshop was its invisible, high-efficiency orchestra
     *   **Output:** Cleaned JSON dataset and HTML structure for this dashboard.
 
 ### 4. Communication & Confirmation
+
+![AI Preview](docs/make-sent-Made-with-Clipchamp.gif)
+
 *   **Tool:** [Make.com](https://www.make.com/)
 *   **Workflow:** 
     *   Watch for "Analysis Complete" flag.
