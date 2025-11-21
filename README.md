@@ -18,7 +18,7 @@ participants_count: 278
 
 > **A state-of-the-art, automated analytics dashboard for the "AI in Business" workshop, powered by Gemini 1.5 Pro and a fully automated data pipeline.**
 
-![Attention Preview](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcm1uam55NDV4OXV1djYyeTZndHJwbTh6cXJ1NjBhMDJoeHlnYm56YiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/YF6ruFN9tmEElUAB6q/giphy.gif)
+![Attention Preview](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcm1uam55NDV4OXV1djYyeTZndHJwbTh6cXJ1NjBhMDJoeHlnYm56YiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Er1OCJtU7mfqYlZoit/giphy.gif)
 
 > [!IMPORTANT]
 > **Workshop Status Update:**
