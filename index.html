@@ -677,28 +677,77 @@
         }
 
         // PDF Function
-        function generatePDF() {
+        async function generatePDF() {
             if (typeof html2pdf === 'undefined') {
                 alert('المكتبة غير جاهزة، يرجى الانتظار...');
                 return;
             }
-            const element = document.getElementById('dashboard-content');
+            
             const btn = document.querySelector('nav button');
-            const original = btn.innerHTML;
-            
+            const originalBtnContent = btn.innerHTML;
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> جاري المعالجة';
+
+            // 1. Capture current theme and force Light Mode for print
+            const html = document.documentElement;
+            const isDark = html.classList.contains('dark');
+            if (isDark) html.classList.remove('dark');
+
+            // 2. Create a clone of the dashboard to manipulate
+            const originalElement = document.getElementById('dashboard-content');
+            const clone = originalElement.cloneNode(true);
+
+            // 3. Handle Canvases (Chart.js canvases need to be converted to images in the clone)
+            // html2canvas sometimes struggles with live canvases, so we snapshot them.
+            const originalCanvases = originalElement.querySelectorAll('canvas');
+            const cloneCanvases = clone.querySelectorAll('canvas');
+
+            originalCanvases.forEach((canvas, index) => {
+                if (cloneCanvases[index]) {
+                    const img = document.createElement('img');
+                    img.src = canvas.toDataURL('image/png');
+                    img.style.width = '100%';
+                    img.style.height = 'auto';
+                    img.className = canvas.className; 
+                    cloneCanvases[index].parentNode.replaceChild(img, cloneCanvases[index]);
+                }
+            });
+
+            // 4. Setup Container for PDF Generation (Fixed width, Light Mode)
+            // We wrap the clone in a container that enforces a desktop width (1200px)
+            // to prevent the mobile layout from triggering and stacking charts.
+            const container = document.createElement('div');
+            container.id = 'pdf-container';
+            container.style.position = 'absolute';
+            container.style.top = '0';
+            container.style.left = '0';
+            container.style.width = '1200px'; // Force desktop width
+            container.style.zIndex = '-1000'; // Hide behind everything
+            container.style.backgroundColor = '#ffffff';
+            container.className = 'text-slate-800 bg-white'; // Tailwind classes for light mode
             
+            container.appendChild(clone);
+            document.body.appendChild(container);
+
+            // 5. Generate PDF
             const opt = {
-                margin: [5, 5],
+                margin: [10, 10],
                 filename: 'AI_Workshop_Report_Full.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
+                html2canvas: { scale: 2, useCORS: true, windowWidth: 1200 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            html2pdf().set(opt).from(element).save().then(() => {
-                btn.innerHTML = original;
-            });
+            try {
+                await html2pdf().set(opt).from(clone).save();
+            } catch (err) {
+                console.error('PDF Generation Error:', err);
+                alert('حدث خطأ أثناء إنشاء الملف.');
+            } finally {
+                // 6. Cleanup & Restore Theme
+                document.body.removeChild(container);
+                if (isDark) html.classList.add('dark');
+                btn.innerHTML = originalBtnContent;
+            }
         }
     </script>
 </body>
