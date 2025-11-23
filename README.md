@@ -20,7 +20,7 @@ participants_count: 278
 ![License](https://img.shields.io/badge/license-MIT-lightgrey?style=flat-square)
 ![Last Commit](https://img.shields.io/badge/last%20commit-November%202025-important?style=flat-square)
 
-> **A state-of-the-art, automated analytics dashboard for the "AI in Business" workshop, powered by Gemini 1.5 Pro and a fully automated data pipeline.**
+> **A state-of-the-art, automated analytics dashboard for the "AI in Business and Project Building" workshop, powered by Gemini 3 Pro and a fully automated data pipeline.**
 
 <p align="left">
   <img src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3aHN5dGRyZmx5eG5yczk2YXNiaGVid3B0Z2psOWR0aXFwMGx2OHZ4cCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/2qGvczt1NqihVOBlDW/giphy.gif" width="20%">
