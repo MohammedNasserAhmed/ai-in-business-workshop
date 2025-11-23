@@ -19,6 +19,7 @@
         function setupTailwind() {
             if (typeof tailwind !== 'undefined') {
                 tailwind.config = {
+                    darkMode: 'class',
                     theme: {
                         extend: {
                             fontFamily: {
@@ -44,6 +45,8 @@
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
         body {
@@ -90,9 +93,40 @@
             transform: scale(1.15);
             text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
+        /* Dark Mode Transitions */
+        body, .card, nav, .text-slate-800, .text-slate-500 {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        .dark body {
+            background-color: #0f172a;
+            color: #f1f5f9;
+        }
+        .dark .card {
+            background-color: #1e293b;
+            border-color: #334155;
+            color: #f1f5f9;
+        }
+        .dark .text-slate-800 { color: #f1f5f9; }
+        .dark .text-slate-500 { color: #94a3b8; }
+        .dark .text-slate-600 { color: #cbd5e1; }
+        .dark .text-slate-700 { color: #e2e8f0; }
+        .dark .bg-white { background-color: #1e293b; }
+        .dark .border-slate-200 { border-color: #334155; }
+        
+        /* Magic Highlight Effect */
+        @keyframes magicPulse {
+            0% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.7); transform: scale(1); }
+            50% { box-shadow: 0 0 0 20px rgba(20, 184, 166, 0); transform: scale(1.02); }
+            100% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0); transform: scale(1); }
+        }
+        .magic-highlight {
+            animation: magicPulse 1.5s ease-out;
+            border: 2px solid #14b8a6 !important;
+            z-index: 50;
+        }
     </style>
 </head>
-<body class="text-slate-800">
+<body class="text-slate-800 dark:bg-slate-900 dark:text-slate-100">
 
     <!-- Navigation -->
     <nav class="bg-brand-900 text-white shadow-xl sticky top-0 z-50 backdrop-blur-md bg-opacity-95">
@@ -106,6 +140,14 @@
                         <h1 class="text-2xl font-bold tracking-wide">تقرير ورشة العمل الشامل</h1>
                         <p class="text-xs text-brand-100 opacity-90">تحليل 278 مشارك | AI in Business</p>
                     </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleTheme()" class="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all focus:outline-none" title="تبديل الوضع الليلي">
+                        <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
+                    </button>
+                    <button onclick="generatePDF()" class="bg-white text-brand-900 px-4 py-2 rounded-lg font-bold text-sm hover:bg-brand-50 transition-colors shadow-lg">
+                        <i class="fa-solid fa-file-pdf ml-2"></i> تحميل PDF
+                    </button>
                 </div>
             </div>
         </div>
@@ -326,6 +368,14 @@
         </footer>
 
     </div>
+
+    <!-- Floating Magic Button -->
+    <button onclick="triggerMagicInsight()" class="fixed bottom-8 right-8 bg-gradient-to-r from-purple-600 to-pink-600 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform z-50 group">
+        <i class="fa-solid fa-wand-magic-sparkles text-2xl group-hover:rotate-12 transition-transform"></i>
+        <span class="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+            اكتشف معلومة سحرية
+        </span>
+    </button>
 
     <!-- LOGIC SCRIPT -->
     <script>
@@ -562,6 +612,69 @@
             });
 
         });
+
+        // Theme Toggle Logic
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+            
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                icon.classList.replace('fa-sun', 'fa-moon');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                icon.classList.replace('fa-moon', 'fa-sun');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Initialize Theme
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            document.getElementById('themeIcon').classList.replace('fa-moon', 'fa-sun');
+        }
+
+        // Magic Insight Logic
+        function triggerMagicInsight() {
+            // 1. Confetti Explosion
+            const duration = 2000;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#14b8a6', '#ec4899', '#f59e0b']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#14b8a6', '#ec4899', '#f59e0b']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+
+            // 2. Select Random Card/Chart
+            const cards = document.querySelectorAll('.card');
+            const randomCard = cards[Math.floor(Math.random() * cards.length)];
+
+            // 3. Scroll to it
+            randomCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            // 4. Highlight Effect
+            randomCard.classList.add('magic-highlight');
+            setTimeout(() => {
+                randomCard.classList.remove('magic-highlight');
+            }, 2000);
+        }
 
         // PDF Function
         function generatePDF() {
