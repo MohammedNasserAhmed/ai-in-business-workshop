@@ -8,8 +8,7 @@
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     
-    <!-- HTML2PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -144,9 +143,6 @@
                 <div class="flex items-center gap-3">
                     <button onclick="toggleTheme()" class="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all focus:outline-none" title="تبديل الوضع الليلي">
                         <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
-                    </button>
-                    <button onclick="generatePDF()" class="bg-white text-brand-900 px-4 py-2 rounded-lg font-bold text-sm hover:bg-brand-50 transition-colors shadow-lg">
-                        <i class="fa-solid fa-file-pdf ml-2"></i> تحميل PDF
                     </button>
                 </div>
             </div>
@@ -676,103 +672,7 @@
             }, 2000);
         }
 
-        // PDF Function
-        async function generatePDF() {
-            if (typeof html2pdf === 'undefined') {
-                alert('المكتبة غير جاهزة، يرجى الانتظار...');
-                return;
-            }
-            
-            const btn = document.querySelector('nav button');
-            const originalBtnContent = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> جاري المعالجة';
 
-            // 1. Capture current theme and force Light Mode for print
-            const html = document.documentElement;
-            const wasDark = html.classList.contains('dark');
-            
-            if (wasDark) {
-                html.classList.remove('dark');
-                // CRITICAL: Wait for styles to recalculate/repaint
-                await new Promise(resolve => setTimeout(resolve, 300));
-            }
-
-            // 2. Capture Canvas Dimensions & Data BEFORE cloning
-            // We need the exact display size (getBoundingClientRect) to prevent high-DPI images from exploding layout
-            const originalElement = document.getElementById('dashboard-content');
-            const originalCanvases = originalElement.querySelectorAll('canvas');
-            const canvasData = Array.from(originalCanvases).map(c => {
-                const rect = c.getBoundingClientRect();
-                return {
-                    width: rect.width,
-                    height: rect.height,
-                    dataUrl: c.toDataURL('image/png')
-                };
-            });
-
-            // 3. Clone the dashboard
-            const clone = originalElement.cloneNode(true);
-
-            // 4. Replace Canvases in Clone with properly sized Images
-            const cloneCanvases = clone.querySelectorAll('canvas');
-            cloneCanvases.forEach((canvas, index) => {
-                const data = canvasData[index];
-                if (data) {
-                    const img = document.createElement('img');
-                    img.src = data.dataUrl;
-                    // Force explicit pixel dimensions to match the live dashboard
-                    img.style.width = `${data.width}px`;
-                    img.style.height = `${data.height}px`;
-                    img.style.maxWidth = '100%'; // Safety
-                    img.className = canvas.className; 
-                    canvas.parentNode.replaceChild(img, canvas);
-                }
-            });
-
-            // 5. Setup Container for PDF Generation
-            const container = document.createElement('div');
-            container.id = 'pdf-container';
-            container.style.position = 'absolute';
-            container.style.top = '0';
-            container.style.left = '0';
-            container.style.width = '1200px'; // Force desktop width
-            container.style.zIndex = '-1000';
-            container.style.backgroundColor = '#ffffff';
-            // Explicitly ensure light mode text colors are applied to the container
-            container.className = 'text-slate-800 bg-white'; 
-            
-            container.appendChild(clone);
-            document.body.appendChild(container);
-
-            // 6. Generate PDF
-            const opt = {
-                margin: [10, 10],
-                filename: 'AI_Workshop_Report_Full.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { 
-                    scale: 2, 
-                    useCORS: true, 
-                    windowWidth: 1200,
-                    // Force white background for the screenshot
-                    backgroundColor: '#ffffff'
-                },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            try {
-                await html2pdf().set(opt).from(clone).save();
-            } catch (err) {
-                console.error('PDF Generation Error:', err);
-                alert('حدث خطأ أثناء إنشاء الملف.');
-            } finally {
-                // 7. Cleanup & Restore Theme
-                document.body.removeChild(container);
-                if (wasDark) {
-                    html.classList.add('dark');
-                }
-                btn.innerHTML = originalBtnContent;
-            }
-        }
     </script>
 </body>
 </html>
