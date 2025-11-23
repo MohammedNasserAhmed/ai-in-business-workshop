@@ -689,51 +689,73 @@
 
             // 1. Capture current theme and force Light Mode for print
             const html = document.documentElement;
-            const isDark = html.classList.contains('dark');
-            if (isDark) html.classList.remove('dark');
+            const wasDark = html.classList.contains('dark');
+            
+            if (wasDark) {
+                html.classList.remove('dark');
+                // CRITICAL: Wait for styles to recalculate/repaint
+                await new Promise(resolve => setTimeout(resolve, 300));
+            }
 
-            // 2. Create a clone of the dashboard to manipulate
+            // 2. Capture Canvas Dimensions & Data BEFORE cloning
+            // We need the exact display size (getBoundingClientRect) to prevent high-DPI images from exploding layout
             const originalElement = document.getElementById('dashboard-content');
+            const originalCanvases = originalElement.querySelectorAll('canvas');
+            const canvasData = Array.from(originalCanvases).map(c => {
+                const rect = c.getBoundingClientRect();
+                return {
+                    width: rect.width,
+                    height: rect.height,
+                    dataUrl: c.toDataURL('image/png')
+                };
+            });
+
+            // 3. Clone the dashboard
             const clone = originalElement.cloneNode(true);
 
-            // 3. Handle Canvases (Chart.js canvases need to be converted to images in the clone)
-            // html2canvas sometimes struggles with live canvases, so we snapshot them.
-            const originalCanvases = originalElement.querySelectorAll('canvas');
+            // 4. Replace Canvases in Clone with properly sized Images
             const cloneCanvases = clone.querySelectorAll('canvas');
-
-            originalCanvases.forEach((canvas, index) => {
-                if (cloneCanvases[index]) {
+            cloneCanvases.forEach((canvas, index) => {
+                const data = canvasData[index];
+                if (data) {
                     const img = document.createElement('img');
-                    img.src = canvas.toDataURL('image/png');
-                    img.style.width = '100%';
-                    img.style.height = 'auto';
+                    img.src = data.dataUrl;
+                    // Force explicit pixel dimensions to match the live dashboard
+                    img.style.width = `${data.width}px`;
+                    img.style.height = `${data.height}px`;
+                    img.style.maxWidth = '100%'; // Safety
                     img.className = canvas.className; 
-                    cloneCanvases[index].parentNode.replaceChild(img, cloneCanvases[index]);
+                    canvas.parentNode.replaceChild(img, canvas);
                 }
             });
 
-            // 4. Setup Container for PDF Generation (Fixed width, Light Mode)
-            // We wrap the clone in a container that enforces a desktop width (1200px)
-            // to prevent the mobile layout from triggering and stacking charts.
+            // 5. Setup Container for PDF Generation
             const container = document.createElement('div');
             container.id = 'pdf-container';
             container.style.position = 'absolute';
             container.style.top = '0';
             container.style.left = '0';
             container.style.width = '1200px'; // Force desktop width
-            container.style.zIndex = '-1000'; // Hide behind everything
+            container.style.zIndex = '-1000';
             container.style.backgroundColor = '#ffffff';
-            container.className = 'text-slate-800 bg-white'; // Tailwind classes for light mode
+            // Explicitly ensure light mode text colors are applied to the container
+            container.className = 'text-slate-800 bg-white'; 
             
             container.appendChild(clone);
             document.body.appendChild(container);
 
-            // 5. Generate PDF
+            // 6. Generate PDF
             const opt = {
                 margin: [10, 10],
                 filename: 'AI_Workshop_Report_Full.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, windowWidth: 1200 },
+                html2canvas: { 
+                    scale: 2, 
+                    useCORS: true, 
+                    windowWidth: 1200,
+                    // Force white background for the screenshot
+                    backgroundColor: '#ffffff'
+                },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
@@ -743,9 +765,11 @@
                 console.error('PDF Generation Error:', err);
                 alert('حدث خطأ أثناء إنشاء الملف.');
             } finally {
-                // 6. Cleanup & Restore Theme
+                // 7. Cleanup & Restore Theme
                 document.body.removeChild(container);
-                if (isDark) html.classList.add('dark');
+                if (wasDark) {
+                    html.classList.add('dark');
+                }
                 btn.innerHTML = originalBtnContent;
             }
         }
