@@ -3,7 +3,7 @@ project_name: AI Business Workshop Report
 version: 1.0.0
 last_updated: 2025-11-21
 maintainers: ["MohammedNasserAhmed"]
-demo_url: "https://mohammednasserahmed.github.io/ai-business-workshop-report/" # TODO: Update with actual deployment URL
+demo_url: "https://mohammednasserahmed.github.io/ai-in-business-workshop/" # TODO: Update with actual deployment URL
 tools_used: ["Microsoft Teams", "Power Automate", "Make.com", "Gemini 1.5 Pro", "Tailwind CSS"]
 participants_count: 278
 ---
