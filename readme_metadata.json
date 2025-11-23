@@ -1,15 +1,15 @@
 {
-  "project_name": "AI in Business Workshop Report",
+  "project_name": "AI in Business and Project Building Workshop",
   "version": "1.0.0",
   "last_updated": "2025-11-21",
   "maintainers": ["MohammedNasserAhmed"],
-  "demo_url": "https://mohammednasserahmed.github.io/ai-business-workshop-report/",
+  "demo_url": "https://mohammednasserahmed.github.io/ai-in-business-workshop/",
   "tools_used": [
     "Microsoft Teams",
     "Power Automate",
     "Make.com",
     "Gemini Assist",
-    "Gemini 1.5 Pro",
+    "Gemini 3 Pro",
     "Tailwind CSS",
     "Chart.js",
     "HTML2PDF"
